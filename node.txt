@@ -1,0 +1,103 @@
+//------------------ Exercise1: HELLO WORLD-----------------------------------//
+
+console.log("HELLO WORLD")
+
+//------------------ Exercise2: BABY STEPS-----------------------------------//
+
+//console.log(process.argv)
+let result = 0
+
+for (let i = 2; i < process.argv.length; i++)
+  result += Number(process.argv[i])
+
+console.log(result)
+
+//------------------ Exercise3: MY FIRST I/O!-----------------------------------//
+
+let fs=require("fs")
+let  contents = fs.readFileSync(process.argv[2]) 
+let lines = contents.toString().split('\n').length - 1  
+console.log(lines)
+
+
+//------------------ Exercise4: MY FIRST ASYNC I/O!-----------------------------------//
+
+var fs = require('fs')  
+var file = process.argv[2]  
+  
+fs.readFile(file, function (err, contents) {  
+  var lines = contents.toString().split('\n').length - 1  
+  console.log(lines)  
+})
+
+//------------------ Exercise5: FILTERED LS-----------------------------------//
+
+var fs = require('fs')
+var path = require('path')
+
+var folder = process.argv[2]
+var ext = '.' + process.argv[3]
+// fs.readdir lire le contenu d'un répertoire............
+fs.readdir(folder, function (err, files) {
+  if (err) return console.error(err)
+  files.forEach(function(file) {
+      if (path.extname(file) === ext) {
+          console.log(file)
+      }
+  })
+})
+
+//------------------ Exercise6: Make it Modular-----------------------------------//
+//  mymodule.js
+const fs=require("fs")
+const path=require("path")
+
+
+module.exports= (dir,ext,callback)=>{
+
+fs.readdir(dir,(err,list)=>{
+    if(err) return callback(err)
+
+    const filtered=list.filter(file=>{
+        return path.extname(file)==='.' + ext
+    })
+
+    return callback(null, filtered)
+})
+}
+//make-it-modular.js
+const mymodule=require('./mymodule.js')
+const directory=process.argv[2]
+const extension= process.argv[3]
+mymodule (directory,extension,(err,filteredList)=>{
+    if (err) return console.log(err)
+    filteredList.forEach(file=>{
+        console.log(file)
+    })
+})
+//------------------ Exercise7: HTTP CLIENT-----------------------------------//
+const http=require("http")
+const url=process.argv[2]
+http.get(url,(response) =>{
+    response.on('error', error => console.error(err))
+    response.setEncoding("utf8")
+    response.on("data",data=>{
+        console.log(data)
+    })
+})
+
+//------------------ Exercise8: HTTP collect-----------------------------------//
+
+const http=require("http")
+const url=process.argv[2]
+const bl = require("bl")
+
+http.get(url,  (response) => {
+  response.pipe(bl( (err, data)=> {
+    if (err)
+      return console.error(err)
+    data = data.toString()
+    console.log(data.length)
+    console.log(data)
+  }))
+})
